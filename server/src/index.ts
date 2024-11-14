@@ -15,7 +15,7 @@ async function init() {
   app.use(express.json());
 
   app.get("/api/data", (req: Request, res: Response) => {
-    console.log("ahah");
+    console.log("ahahsss");
     res.json({ msg: 1111 });
   });
 
