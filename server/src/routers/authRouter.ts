@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { authController } from "../controllers/authController/create.ts";
+import { createAccount } from "../controllers/authController.ts";
 
 const authRouter = Router();
 
-authRouter.post("/create", authController);
+authRouter.post("/create", createAccount);
 
 export default authRouter;
