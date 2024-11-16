@@ -12,10 +12,16 @@ async function init() {
 
   await connectMongoDB();
 
-  app.use(cors());
+  app.use(cors({}
+    
+  ));
   app.use(express.json());
 
   app.use("/api", appRouter);
+
+  app.get("/api/test", (req, res) => {
+    res.json({success: 1, data: "You so dumb"})
+  })
 
   app.listen(PORT, () => {
     console.log(`Server is running on PORT: ${PORT}`);

@@ -2,6 +2,10 @@ import { Request, Response } from "express";
 import User from "../models/User.ts";
 import { hashPassword } from "../utility/password.ts";
 import { comparePassword } from "../utility/password.ts";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../utility/jwt-util.ts";
 
 export const createAccount = async (
   req: Request,
@@ -62,7 +66,31 @@ export const login = async (req: Request, res: Response): Promise<any> => {
         .json({ success: 0, message: "Invalid username or password" });
     }
 
-    res.json({ success: 1, data: user });
+    // Send tokens to client
+    const accessToken = await generateAccessToken({
+      _id: user._id.toString(),
+      username: user.username,
+    });
+
+    // Send token to client
+    const refreshToken = await generateRefreshToken({
+      _id: user._id.toString(),
+      username: user.username,
+    });
+
+    res.cookie("token", accessToken, {
+      httpOnly: true, // Prevent access via JavaScript
+      secure: false, // Set to true in production when using HTTPS
+      sameSite: "lax", // Or "None" if cross-origin
+      path: "/"
+    });
+    res.cookie("refresh-token", refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+
+    return res.json({ success: 1, message: "Login successfuly" });
   } catch (error) {
     console.log("error ", error);
   }

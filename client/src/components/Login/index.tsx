@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./style.css";
 
 function Login() {
@@ -7,6 +7,8 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false); // To show loading state
+
+  const navigate = useNavigate()
 
   // Handle username input
   const handleSetUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +44,7 @@ function Login() {
     setIsSubmitting(true); // Start loading
 
     try {
-      const response = await fetch("http://localhost:8000/api/auth/login", {
+      const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,7 +60,7 @@ function Login() {
       if (response.ok) {
         // Handle success (redirect to dashboard or home page)
         console.log("Login successful!", data);
-        // Redirect or store auth token as needed
+        navigate("/")
       } else {
         // Handle error (e.g., invalid credentials)
         setError(data.message || "An error occurred during login.");
