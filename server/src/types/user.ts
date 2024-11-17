@@ -1,7 +1,7 @@
 import { JwtPayload } from "jsonwebtoken";
 import {Request} from 'express'
 
-export type User = {
+export type TUser = {
   _id: string;
   username: string;
 };

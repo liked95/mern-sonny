@@ -1,8 +1,11 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuthContext } from '@/hooks/useAuthContext'
+import { User } from '@/hooks/useCurrentUser'
 
-export function withAuth<T extends object>(Component: React.ComponentType<T>): React.FC<T> {
+export function withAuth<T extends object>(
+  Component: React.ComponentType<T & { user: User }>
+): React.FC<T> {
   return (props: T) => {
     const { user, isFetching } = useAuthContext()
     // Show a loading state until user data is fetched
@@ -15,6 +18,6 @@ export function withAuth<T extends object>(Component: React.ComponentType<T>): R
       return <Navigate to="/login" replace />
     }
 
-    return <Component {...props} />
+    return <Component {...props} user={user} />
   }
 }

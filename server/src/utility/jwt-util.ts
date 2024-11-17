@@ -1,10 +1,10 @@
 import jwt from "jsonwebtoken";
-import { User } from "../types/user.ts";
+import { TUser } from "../types/user.ts";
 
 const ACCESS_TOKEN_EXPIRATION = "5m";
 const REFRESH_TOKEN_EXPIRATION = "7d";
 
-export async function generateAccessToken(user: User): Promise<string> {
+export async function generateAccessToken(user: TUser): Promise<string> {
   try {
     if (!process.env.ACCESS_TOKEN_SECRET) {
       throw new Error("Invalid access token secret key!");
@@ -34,7 +34,7 @@ export function verifyAccessToken(token: string) {
   return payload;
 }
 
-export async function generateRefreshToken(user: User): Promise<string> {
+export async function generateRefreshToken(user: TUser): Promise<string> {
   try {
     if (!process.env.REFRESH_TOKEN_SECRET) {
       throw new Error("Invalid refresh token secret key!");

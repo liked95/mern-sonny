@@ -1,3 +1,4 @@
+import { refreshAccessToken } from '@/utilility/refreshAccessToken'
 import { useEffect, useState } from 'react'
 
 export type User = {
@@ -28,8 +29,14 @@ export const useCurrentUser = (): Props => {
         if (response.success) {
           console.log('response.user: ', response.data)
           setUser(response.data)
+        } else if (response.message === 'TokenExpiredError') {
+          // Refresh access token
+          const refreshUserData = await refreshAccessToken()
+          if (refreshUserData) {
+            setUser(refreshUserData)
+          }
         } else {
-          console.warn('User fetch failed:', response.message)
+          console.error('User fetch failed:', response.message)
           setUser(null)
         }
       } catch (error) {

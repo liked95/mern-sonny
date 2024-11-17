@@ -3,14 +3,14 @@ import './Dashboard.css'
 import { User } from '@/hooks/useCurrentUser'
 
 type DashBoardProps = {
-  currentUser: User
+  user: User
 }
 
-const Dashboard: React.FC<DashBoardProps> = ({ currentUser }) => {
+const Dashboard: React.FC<DashBoardProps> = ({ user }) => {
   return (
     <main className="dashboard-container">
       <div className="dashboard-content">
-        <h2>Welcome {currentUser?.username}</h2>
+        <h2>Welcome {user?.username}</h2>
         <p>
           Hello, <strong>User</strong>! Here’s a quick overview of your account.
         </p>

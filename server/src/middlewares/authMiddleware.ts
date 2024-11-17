@@ -20,21 +20,20 @@ export async function validateAuthentication(req: AuthRequest, res: Response, ne
     req.user = user
     next()
   } catch (error: any) {
-    console.error('Error in validateAuthentication:', error)
+    console.error('Error in validateAuthentication:', error.message)
 
-    switch (error.beta) {
+    switch (error.name) {
       case 'JsonWebTokenError':
-        res.status(400).json({ success: 0, message: 'Invalid token signature' })
+        res.status(400).json({ success: 0, message: error.name })
         break
       case 'TokenExpiredError':
-        res.status(401).json({ success: 0, message: 'Token has expired' })
+        res.status(401).json({ success: 0, message: error.name })
         break
       case 'NotBeforeError':
-        res.status(401).json({ success: 0, message: 'Token is not active yet (nbf claim)' })
+        res.status(401).json({ success: 0, message: error.name })
         break
       default:
-        break
+        next(error)
     }
-    next(error)
   }
 }

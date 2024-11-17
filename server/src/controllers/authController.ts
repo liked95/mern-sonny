@@ -1,8 +1,10 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import User from '../models/User.ts'
 import { hashPassword } from '../utility/password.ts'
 import { comparePassword } from '../utility/password.ts'
-import { generateAccessToken, generateRefreshToken } from '../utility/jwt-util.ts'
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utility/jwt-util.ts'
+import { TUser } from '../types/user.ts'
+import { generateAndSetTokens } from '../utility/generateAndSetTokens.ts'
 
 export const createAccount = async (req: Request, res: Response): Promise<any> => {
   try {
@@ -50,25 +52,7 @@ export const login = async (req: Request, res: Response): Promise<any> => {
 
     const userData = { _id: user._id.toString(), username: user.username }
 
-    // Send tokens to client
-    const accessToken = await generateAccessToken(userData)
-
-    // Send token to client
-    const refreshToken = await generateRefreshToken(userData)
-
-    res.cookie('token', accessToken, {
-      httpOnly: true, // Prevent access via JavaScript
-      secure: false, // Set to true in production when using HTTPS
-      sameSite: 'lax', // Or "None" if cross-origin
-      path: '/',
-    })
-    res.cookie('refresh-token', refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-    })
-
-    return res.json({ success: 1, data: userData })
+    await generateAndSetTokens(userData, res)
   } catch (error) {
     console.log('error ', error)
   }
@@ -95,4 +79,23 @@ export const logout = async (req: Request, res: Response): Promise<any> => {
   }
 }
 
-export default { createAccount, login, logout }
+export const refreshAccessToken = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const refreshToken = req.cookies?.['refresh-token']
+    if (!refreshToken) {
+      res.status(401).json({ success: 0, message: 'Refresh token missing' })
+    }
+
+    const user = (await verifyRefreshToken(refreshToken)) as TUser
+    if (!user) {
+      res.status(403).json({ success: 0, message: 'Refresh token is invalid' })
+    }
+
+    const userData = { username: user.username, _id: user._id }
+    await generateAndSetTokens(userData, res)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export default { createAccount, login, logout, refreshAccessToken }
