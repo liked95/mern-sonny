@@ -63,7 +63,6 @@ function Login() {
 
         if (user) {
           setUser(user)
-          localStorage.setItem('user', JSON.stringify(user))
         }
 
         navigate('/')

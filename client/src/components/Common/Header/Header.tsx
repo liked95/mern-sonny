@@ -1,6 +1,6 @@
 import React from 'react'
 import './Header.css'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuthContext } from '@/hooks/useAuthContext'
 
 const Header: React.FC = () => {
@@ -15,12 +15,11 @@ const Header: React.FC = () => {
 
       console.log('response', response)
       if (response.success) {
-        navigate('/login')
         setUser(null)
-        localStorage.remove('user')
+        navigate('/login')
       }
     } catch (error) {
-      console.log(error)
+      console.error('Logout failed:', error)
     }
   }
 
@@ -30,15 +29,17 @@ const Header: React.FC = () => {
       <nav className="header-nav">
         <ul className="nav-links">
           <li>
-            <a href="/">Home</a>
+            <Link to="/">Home</Link>
           </li>
           <li>
-            <a href="/about">About</a>
+            <Link to="/about">About</Link>
           </li>
           <li>
-            <a href="/contact">Contact</a>
+            <Link to="/contact">Contact</Link>
           </li>
-          <button onClick={handleLogout}>Logout</button>
+          <li>
+            <button onClick={handleLogout}>Logout</button>
+          </li>
         </ul>
       </nav>
     </header>

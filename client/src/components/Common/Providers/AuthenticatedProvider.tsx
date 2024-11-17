@@ -8,12 +8,17 @@ interface Props {
 interface AuthContextValue {
   user: User
   setUser: Dispatch<SetStateAction<User | null>>
+  isFetching: boolean
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null)
 
 export const AuthenticatedProvider = (props: Props) => {
-  const { user, setUser } = useCurrentUser()
+  const { user, setUser, isFetching } = useCurrentUser()
 
-  return <AuthContext.Provider value={{ user, setUser }}>{props.children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={{ user, setUser, isFetching }}>
+      {props.children}
+    </AuthContext.Provider>
+  )
 }

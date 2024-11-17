@@ -8,42 +8,40 @@ export type User = {
 type Props = {
   user: User
   setUser: React.Dispatch<React.SetStateAction<User | null>>
+  isFetching: boolean
 }
 
 export const useCurrentUser = (): Props => {
-  const [user, setUser] = useState<User | null>(() => {
-    // Initialize user state from localStorage or sessionStorage
-    try {
-      const storedUser = localStorage.getItem('user')
-      return storedUser ? JSON.parse(storedUser) : null
-    } catch (error) {
-      console.error('Invalid user data in localStorage. Clearing it.', error)
-      localStorage.removeItem('user') // Remove invalid data
-      return null
-    }
-  })
+  const [user, setUser] = useState<User | null>(null)
+  const [isFetching, setIsFetching] = useState(true) // Optional: track loading state
 
   useEffect(() => {
-    if (!user) {
-      async function fetchUser() {
-        try {
-          const response = await fetch('/api/user/').then(res => res.json())
-          if (response.success) {
-            setUser(response.user)
-            localStorage.setItem('user', JSON.stringify(response.user))
-          } else {
-            setUser(null)
-            localStorage.removeItem('user')
-          }
-        } catch (error) {
-          console.log('Error fetching user:', error)
-          setUser(null)
-          localStorage.removeItem('user')
-        }
-      }
-      fetchUser()
-    }
-  }, [user])
+    async function fetchUser() {
+      try {
+        setIsFetching(true)
 
-  return { user, setUser }
+        const response = await fetch('/api/user/', {
+          method: 'GET',
+          credentials: 'include', // Ensure cookies are sent
+        }).then(res => res.json())
+
+        if (response.success) {
+          console.log('response.user: ', response.data)
+          setUser(response.data)
+        } else {
+          console.warn('User fetch failed:', response.message)
+          setUser(null)
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error)
+        setUser(null)
+      } finally {
+        setIsFetching(false)
+      }
+    }
+
+    fetchUser()
+  }, [])
+
+  return { user, setUser, isFetching }
 }
