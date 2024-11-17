@@ -15,7 +15,6 @@ export const useCurrentUser = (): Props => {
     // Initialize user state from localStorage or sessionStorage
     try {
       const storedUser = localStorage.getItem('user')
-      console.log('🚀 ~ useCurrentUser ~ storedUser:', storedUser)
       return storedUser ? JSON.parse(storedUser) : null
     } catch (error) {
       console.error('Invalid user data in localStorage. Clearing it.', error)
