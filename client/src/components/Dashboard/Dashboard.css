@@ -1,0 +1,35 @@
+.dashboard-container {
+  background-color: #1e1e2f; /* Darker background for better contrast */
+  color: #fff; /* White text for better readability */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  min-height: 700px;
+}
+
+.dashboard-content {
+  text-align: center;
+}
+
+.dashboard-widgets {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.widget {
+  background-color: #292940; /* Slightly lighter than the main background */
+  padding: 1rem;
+  border-radius: 8px;
+  flex: 1;
+  text-align: left;
+}
+
+.widget h3 {
+  margin-top: 0;
+}
+
+@media (max-width: 600px) {
+  .dashboard-widgets {
+    flex-direction: column;
+  }
+}

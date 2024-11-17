@@ -1,16 +1,14 @@
-/* Basic reset and background gradient */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
+
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Full height layout */
 }
 
-body, html {
-  height: 100%;
+main {
+  flex: 1;
   display: flex;
-  align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
-  color: white;
+  align-items: center; /* Center the dashboard */
 }

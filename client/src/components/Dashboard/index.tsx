@@ -1,19 +1,15 @@
-import React from "react";
-import "./style.css";
+import React from 'react'
+import './Dashboard.css'
 
-function Dashboard() {
+const Dashboard: React.FC = () => {
   return (
-    <div className="dashboard-container">
+    <main className="dashboard-container">
       <div className="dashboard-content">
-        <h1>Welcome to Your Dashboard</h1>
-        <p>Hello, <strong>User</strong>! Here’s a quick overview of your account.</p>
-        
-        <div className="dashboard-links">
-          <a href="#profile">Profile</a>
-          <a href="#settings">Settings</a>
-          <a href="#logout">Logout</a>
-        </div>
-        
+        <h2>Welcome to Your Dashboard</h2>
+        <p>
+          Hello, <strong>User</strong>! Here’s a quick overview of your account.
+        </p>
+
         <div className="dashboard-widgets">
           <div className="widget">
             <h3>Recent Activities</h3>
@@ -26,8 +22,8 @@ function Dashboard() {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </main>
+  )
 }
 
-export default Dashboard;
+export default Dashboard

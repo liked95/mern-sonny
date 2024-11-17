@@ -1,77 +1,83 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import "./style.css";
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import './style.css'
+import { useAuthContext } from '@/hooks/useAuthContext'
 
 function Login() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false); // To show loading state
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false) // To show loading state
+  const { setUser } = useAuthContext()
 
   const navigate = useNavigate()
 
   // Handle username input
   const handleSetUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUsername(event.target.value.trim());
-  };
+    setUsername(event.target.value.trim())
+  }
 
   // Handle password input
   const handleSetPassword = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(event.target.value.trim());
-  };
+    setPassword(event.target.value.trim())
+  }
 
   // Validate inputs
   const validateInputs = () => {
-    setError(""); // Reset error state
+    setError('') // Reset error state
 
     // Basic validation to ensure both fields are filled
     if (!username || !password) {
-      setError("Both username and password are required.");
-      return false;
+      setError('Both username and password are required.')
+      return false
     }
 
-    return true;
-  };
+    return true
+  }
 
   // Handle form submission
   const handleSubmitLogin = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); // Prevent default form submission
+    event.preventDefault() // Prevent default form submission
 
     if (!validateInputs()) {
-      return; // Stop submission if validation fails
+      return // Stop submission if validation fails
     }
 
-    setIsSubmitting(true); // Start loading
+    setIsSubmitting(true) // Start loading
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           username,
           password,
         }),
-      });
+      }).then(res => res.json())
 
-      const data = await response.json();
-
-      if (response.ok) {
+      if (response.success) {
         // Handle success (redirect to dashboard or home page)
-        console.log("Login successful!", data);
-        navigate("/")
+        const user = response.data
+
+        if (user) {
+          setUser(user)
+          localStorage.setItem('user', JSON.stringify(user))
+        }
+
+        navigate('/')
       } else {
         // Handle error (e.g., invalid credentials)
-        setError(data.message || "An error occurred during login.");
+        setError(response.message || 'An error occurred during login.')
       }
     } catch (err) {
-      setError("Server error. Please try again later.");
-      console.log(err);
+      setError('Server error. Please try again later.')
+      console.log(err)
     } finally {
-      setIsSubmitting(false); // Stop loading
+      setIsSubmitting(false) // Stop loading
     }
-  };
+  }
 
   return (
     <div className="login-container">
@@ -99,7 +105,7 @@ function Login() {
             required
           />
           <button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Logging in..." : "Login"}
+            {isSubmitting ? 'Logging in...' : 'Login'}
           </button>
           {error && <div className="error-message">{error}</div>}
           <a href="#" className="forgot-password">
@@ -111,7 +117,7 @@ function Login() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default Login;
+export default Login

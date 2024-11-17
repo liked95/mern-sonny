@@ -8,9 +8,10 @@
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    "noUnusedParameters": false
   },
   "ts-node": {
     "esm": true
-  }
+  },
+  "include": ["src/**/*.ts", "src/types/**/*.d.ts"]
 }
