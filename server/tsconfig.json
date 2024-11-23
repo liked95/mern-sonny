@@ -1,17 +1,16 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "module": "NodeNext",
+    "target": "ES6",                      // Target modern JavaScript
+    "module": "NodeNext",                 // Node.js-style module resolution
     "moduleResolution": "NodeNext",
     "strict": true,
-    "esModuleInterop": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false
+    "esModuleInterop": true,              // Compatibility with CommonJS modules
+    "allowImportingTsExtensions": true,   // Allow explicit ".ts" in imports
+    "resolveJsonModule": true,            // Enable importing JSON files
+    "noEmit": true                        // Prevent TypeScript from generating JS
   },
   "ts-node": {
-    "esm": true
+    "esm": true                           // Enable ESM behavior
   },
   "include": ["src/**/*.ts", "src/types/**/*.d.ts"]
 }

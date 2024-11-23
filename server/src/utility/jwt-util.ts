@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { TUser } from "../types/user.ts";
 
-const ACCESS_TOKEN_EXPIRATION = "5m";
+const ACCESS_TOKEN_EXPIRATION = "10s";
 const REFRESH_TOKEN_EXPIRATION = "7d";
 
 export async function generateAccessToken(user: TUser): Promise<string> {
