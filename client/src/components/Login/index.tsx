@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import './style.css'
 import { useAuthContext } from '@/hooks/useAuthContext'
+import loginIcon from "@/assets/images/login-icon.gif"
 
 function Login() {
   const [username, setUsername] = useState('')
@@ -82,10 +83,10 @@ function Login() {
     <div className="login-container">
       <div className="login-box">
         <div className="login-logo">
-          <img src="./src/assets/images/login-icon.gif" alt="Flower Icon" />
+          <img src={loginIcon} alt="Flower Icon" />
         </div>
         <h1>
-          Welcome to <span className="brand">Spectre</span>
+          Welcome to fuck <span className="brand">Spectre</span>
         </h1>
         <p>Securely Log In and Get Started!</p>
         <form onSubmit={handleSubmitLogin}>

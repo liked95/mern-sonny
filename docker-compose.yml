@@ -5,7 +5,12 @@ services:
     build:
       context: ./client
     ports:
-      - "3000:3000"
+      - "3000:5173"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
     networks:
       - app-network
 
@@ -22,6 +27,7 @@ services:
       - REDIS_URL=redis://redis:6379
     depends_on:
       - mongo
+      - redis
     networks:
       - app-network
     
@@ -30,6 +36,8 @@ services:
     container_name: mongo
     ports:
       - "27017:27017"
+    volumes:
+      - mongo_data:/data/db  # Persistent data volume for MongoDB
     networks:
       - app-network
 
@@ -38,8 +46,14 @@ services:
     container_name: redis
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data  # Persistent data volume for Redis
     networks:
       - app-network
 
 networks:
   app-network:
+
+volumes:
+  mongo_data:  # Volume for MongoDB
+  redis_data:  # Volume for Redis
