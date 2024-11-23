@@ -3,8 +3,8 @@ FROM node:18-alpine
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and tsconfig.json to the container
-COPY package.json tsconfig.json ./
+# Copy package.json to the container
+COPY package.json ./
 
 # Install all dependencies without relying on a lockfile
 RUN yarn install
