@@ -1,83 +1,89 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import "./style.css";
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import './style.css'
 
 function Signup() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const navigate = useNavigate()
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
 
   const handleSetUsername = (event: React.ChangeEvent<HTMLInputElement>) => {
     // Sanitize input by trimming spaces
-    setUsername(event.target.value.trim());
-  };
+    setUsername(event.target.value.trim())
+  }
 
   const handleSetPassword = (event: React.ChangeEvent<HTMLInputElement>) => {
     // Sanitize input by trimming spaces
-    setPassword(event.target.value.trim());
-  };
+    setPassword(event.target.value.trim())
+  }
 
   const validateInputs = () => {
     // Reset error state
-    setError("");
+    setError('')
 
     // Check if username and password meet length requirements
     if (username.length < 4) {
-      setError("Username must be at least 4 characters long.");
-      return false;
+      setError('Username must be at least 4 characters long.')
+      return false
     }
     if (password.length < 6) {
-      setError("Password must be at least 6 characters long.");
-      return false;
+      setError('Password must be at least 6 characters long.')
+      return false
     }
 
     // Additional validations (e.g., regex for allowed characters)
-    const usernameRegex = /^[a-zA-Z0-9_]+$/;
+    const usernameRegex = /^[a-zA-Z0-9_]+$/
     if (!usernameRegex.test(username)) {
-      setError("Username can only contain letters, numbers, and underscores.");
-      return false;
+      setError('Username can only contain letters, numbers, and underscores.')
+      return false
     }
 
-    return true;
-  };
+    return true
+  }
 
   const handleSubmitSignupAccount = async (
     event: React.MouseEvent<HTMLButtonElement>
   ): Promise<void> => {
-    event.preventDefault();
+    event.preventDefault()
 
     if (!validateInputs()) {
-      return; // Stop submission if validation fails
+      return // Stop submission if validation fails
     }
 
     console.log({
       username,
       password,
-    });
+    })
 
     try {
-      const response = await fetch("/api/auth/create", {
-        method: "POST",
+      const response = await fetch('/api/auth/create', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           username,
           password,
         }),
-      });
+      })
 
-      const data = await response.json();
-      console.log(data);
+      const data = await response.json()
+      if (data.success) {
+        navigate('/login')
+      } else {
+        setError(data?.message)
+        return
+      }
     } catch (error) {
-      console.error("Error during signing up account: ", error)
+      console.error('Error during signing up account: ', error)
     }
 
     // Clear input fields after successful submission
-    setUsername("");
-    setPassword("");
-    setError("");
-  };
+    setUsername('')
+    setPassword('')
+    setError('')
+  }
 
   return (
     <div className="signup-container">
@@ -118,7 +124,7 @@ function Signup() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default Signup;
+export default Signup
