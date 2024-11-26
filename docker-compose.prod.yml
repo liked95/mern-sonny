@@ -3,10 +3,12 @@ version: "3.8"
 services:
   client:
     build:
-      context: . # The root context where both `client` and `server` directories are
-      dockerfile: client/Dockerfile.prod # The client Dockerfile in the `client` directory
+      context: .
+      dockerfile: client/Dockerfile.prod
+    volumes:
+      - client-build:/client-build
     ports:
-      - "80:80" # Expose the client on port 80 (served by Nginx)
+      - "80:80"
     environment:
       NODE_ENV: production
 
@@ -14,12 +16,14 @@ services:
     build:
       context: .
       dockerfile: server/Dockerfile.prod
+    volumes:
+      - client-build:/client-build
     ports:
       - "8000:8000"
     environment:
       NODE_ENV: production
+      CLIENT_BUILD_PATH: /client-build
     depends_on:
-      - client
       - redis
     networks:
       - app-network
@@ -30,7 +34,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - redis_data:/data # Persistent data volume for Redis
+      - redis_data:/data
     networks:
       - app-network
 
@@ -38,4 +42,5 @@ networks:
   app-network:
 
 volumes:
-  redis_data: # Volume for Redis
+  client-build:
+  redis_data:

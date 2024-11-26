@@ -1,40 +1,39 @@
-# Stage 1: Build
+# Stage 1: Build the server app
 FROM node:18-alpine AS server-build
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Copy package.json and for dependency installation
-COPY package.json ./
+# Copy the package.json and yarn.lock for dependency installation
+COPY server/package.json ./server/yarn.lock ./
 
 # Install all dependencies (including devDependencies)
 RUN yarn install
 
-# Copy the rest of the application
-COPY . .
+# Copy the server source code
+COPY server/ ./
 
-# Compile TypeScript to JavaScript using SWC or TSC
-# Assumes you have a "build" script in package.json
-RUN yarn build  
+# Build the server (e.g., TypeScript → JavaScript)
+RUN yarn build
 
-# Stage 2: Runtime
+# Stage 2: Prepare runtime environment
 FROM node:18-alpine
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Copy only production dependencies
-COPY package.json ./
+# Install only production dependencies
+COPY server/package.json ./server/yarn.lock ./
 RUN yarn install --production
 
-# Copy the compiled app from the build stage
+# Copy the compiled server files
 COPY --from=server-build /app/dist /app/dist
 
-# Copy the built client files from the client Dockerfile's build stage
-COPY --from=client-build /app/dist /app/public
+# Copy the client build files (from the shared volume)
+COPY /client-build /app/public
 
-# Expose the application port
+# Expose the server port
 EXPOSE 8000
 
-# Start the application
+# Start the server
 CMD ["node", "dist/index.js"]
