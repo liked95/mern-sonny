@@ -7,7 +7,7 @@ FROM node:18-alpine AS client-build
 WORKDIR /app
 
 # Copy the client package files and install dependencies
-COPY client/package.json client/yarn.lock ./
+COPY client/package.json ./
 RUN yarn install
 
 # Copy the source code of the client
