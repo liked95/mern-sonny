@@ -5,7 +5,7 @@ FROM node:18-alpine AS server-build
 WORKDIR /app
 
 # Copy the package.json and yarn.lock for dependency installation
-COPY server/package.json ./server/yarn.lock ./
+COPY server/package.json ./
 
 # Install all dependencies (including devDependencies)
 RUN yarn install
