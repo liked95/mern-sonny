@@ -1,12 +1,17 @@
 import mongoose from "mongoose";
 
-const connectionString =
-  process.env.MONGO_URI || "mongodb://localhost:27017/jwt";
+
 
 async function connectMongoDB(): Promise<void> {
   try {
-    await mongoose.connect(connectionString);
-    console.log(`Mongodb successfully connect on ${connectionString}`);
+    const uri = process.env.MONGO_URI
+    if (!uri) {
+      console.error("MongoDB URI does not exist!")
+      process.exit(1)
+    }
+
+    await mongoose.connect(uri);
+    console.log(`Mongodb successfully connect on ${process.env.NODE_ENV}`);
   } catch (error) {
     console.error(error);
     process.exit(1);

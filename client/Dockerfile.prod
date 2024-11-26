@@ -1,0 +1,28 @@
+# client/Dockerfile.prod
+
+# Use Node.js image to build the client
+FROM node:18-alpine AS client-build
+
+# Set working directory for client build
+WORKDIR /app
+
+# Copy the client package files and install dependencies
+COPY client/package.json client/yarn.lock ./
+RUN yarn install
+
+# Copy the source code of the client
+COPY client/ ./
+
+# Build the client (e.g., Vite build, React, etc.)
+RUN yarn build
+
+# Final image uses Nginx to serve the built client files
+FROM nginx:alpine
+
+# Copy built client files from the client-build stage
+COPY --from=client-build /app/dist /usr/share/nginx/html
+
+# Expose port 80 to serve the client
+EXPOSE 80
+
+# No CMD needed because Nginx runs by default

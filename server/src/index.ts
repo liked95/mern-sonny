@@ -1,52 +1,59 @@
-import cookieParser from "cookie-parser";
-import cors from "cors";
-import dotenv from "dotenv";
-import express from "express";
-import morgan from "morgan";
-import session from "express-session";
+import cookieParser from 'cookie-parser'
+import cors from 'cors'
+import dotenv from 'dotenv'
+import express from 'express'
+import morgan from 'morgan'
+import session from 'express-session'
+import path, {dirname} from 'path'
 // import RedisStore from "connect-redis";
 // import { Redis } from "ioredis";
 
-import connectMongoDB from "./config/db.ts";
-import appRouter from "./routers/index.ts";
-import errorHandlerMiddleware from "./middlewares/errorHandlerMiddleware.ts";
+import connectMongoDB from './config/db.ts'
+import appRouter from './routers/index.ts'
+import errorHandlerMiddleware from './middlewares/errorHandlerMiddleware.ts'
+import { fileURLToPath } from 'url'
 
-dotenv.config();
+dotenv.config()
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000
 
 async function init() {
-  const app = express();
+  const app = express()
 
-  await connectMongoDB();
+  await connectMongoDB()
 
   app.use(
     cors({
-      origin: ["http://localhost:8000"],
-      methods: ["GET", "POST", "PUT", "DELETE"],
+      origin: ['http://localhost:8000'],
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
     })
-  );
+  )
 
-  app.use(morgan("dev"))
-  app.use(express.json());
-  app.use(cookieParser());
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+
+  // Serve static files from the client build folder
+  app.use(express.static(path.join(__dirname, 'public')));
+
+  app.use(morgan('dev'))
+  app.use(express.json())
+  app.use(cookieParser())
   app.use(
     session({
       secret: process.env.EXPRESS_SESSION_SECRET as string,
       resave: false,
       saveUninitialized: true,
     })
-  );
+  )
 
   // Protected routes
-  app.use("/api", appRouter);
+  app.use('/api', appRouter)
 
   // Error handler middleware
-  app.use(errorHandlerMiddleware);
+  app.use(errorHandlerMiddleware)
 
   app.listen(PORT, () => {
-    console.log(`Server is running on PORT: ${PORT}`);
-  });
+    console.log(`Server is running on PORT: ${PORT}`)
+  })
 }
 
-init();
+init()

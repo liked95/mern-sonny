@@ -1,0 +1,10 @@
+node_modules/
+dist/
+build/
+docker-compose.override.yml
+.env
+.git/
+.DS_Store
+*.log
+coverage/
+tests/
