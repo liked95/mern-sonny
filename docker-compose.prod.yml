@@ -5,8 +5,6 @@ services:
     build:
       context: .
       dockerfile: server/Dockerfile.prod
-    volumes:
-      - ./server/public:/app/public  # Ensure public directory is mounted correctly
     ports:
       - "8000:8000"
     env_file:
