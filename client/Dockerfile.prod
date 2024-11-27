@@ -1,13 +1,10 @@
 # Stage 1: Build the client app
 FROM node:18-alpine AS client-build
 
-# Set the working directory
 WORKDIR /app
 
-# Copy the package.json for dependency installation
-COPY client/package.json ./
-
 # Install dependencies
+COPY client/package.json ./
 RUN yarn install
 
 # Copy the client source code
@@ -16,8 +13,5 @@ COPY client/ ./
 # Build the production-ready client app
 RUN yarn build
 
-# Stage 2: Serve the built files using Nginx
-FROM nginx:alpine
-
-# Copy the build files from the previous stage
-COPY --from=client-build /app/dist /usr/share/nginx/html
+# No Nginx in this Dockerfile. Just copy the built assets to a volume.
+VOLUME ["/client-build"]

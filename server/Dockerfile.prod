@@ -1,13 +1,10 @@
 # Stage 1: Build the server app
 FROM node:18-alpine AS server-build
 
-# Set the working directory
 WORKDIR /app
 
-# Copy the package.json for dependency installation
+# Install dependencies
 COPY server/package.json ./
-
-# Install all dependencies (including devDependencies)
 RUN yarn install
 
 # Copy the server source code
@@ -19,7 +16,6 @@ RUN yarn build
 # Stage 2: Prepare runtime environment
 FROM node:18-alpine
 
-# Set the working directory
 WORKDIR /app
 
 # Install only production dependencies
@@ -28,6 +24,9 @@ RUN yarn install --production
 
 # Copy the compiled server files
 COPY --from=server-build /app/dist /app/dist
+
+# Copy the built client files from the shared volume into the public directory of the server
+COPY --from=client-build /app/dist /app/public
 
 # Expose the server port
 EXPOSE 8000
