@@ -20,6 +20,8 @@ services:
       - client-build:/client-build
     ports:
       - "8000:8000"
+    env_file:
+      - server/.env
     environment:
       NODE_ENV: production
       CLIENT_BUILD_PATH: /client-build
