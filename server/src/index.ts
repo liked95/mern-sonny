@@ -31,8 +31,11 @@ async function init() {
 
   // Serve static files from the client build folder
   const __dirname = dirname(fileURLToPath(import.meta.url))
-  const publicPath = path.join(__dirname, '../public')
+  const publicPath =
+    process.env.NODE_ENV === 'development' ? path.join(__dirname, '../public') : path.join(__dirname, '../../public')
   app.use(express.static(publicPath))
+
+  console.log('first', path.join(publicPath, 'index.html'))
 
   app.use(morgan('dev'))
   app.use(express.json())
