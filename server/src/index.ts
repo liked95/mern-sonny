@@ -22,12 +22,15 @@ async function init() {
 
   await connectMongoDB()
 
-  app.use(
-    cors({
-      origin: ['http://localhost:8000'],
-      methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    })
-  )
+  const corsOptions =
+    process.env.NODE_ENV === 'development'
+      ? {
+          origin: 'http://localhost:8000',
+          methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        }
+      : {}
+
+  app.use(cors(corsOptions))
 
   // Serve static files from the client build folder
   const __dirname = dirname(fileURLToPath(import.meta.url))
