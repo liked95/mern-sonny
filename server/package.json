@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon --watch src --legacy-watch --exec node --loader ts-node/esm src/index.ts",
     "start": "node dist/src/index.js",
-    "build": "swc src -d dist --source-maps"
+    "build": "tsc"
   },
   "type": "module",
   "dependencies": {
