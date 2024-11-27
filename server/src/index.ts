@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 import express from 'express'
 import morgan from 'morgan'
 import session from 'express-session'
-import path, {dirname} from 'path'
+import path, { dirname } from 'path'
 // import RedisStore from "connect-redis";
 // import { Redis } from "ioredis";
 
@@ -29,10 +29,10 @@ async function init() {
     })
   )
 
-  const __dirname = dirname(fileURLToPath(import.meta.url));
-
   // Serve static files from the client build folder
-  app.use(express.static(path.join(__dirname, 'public')));
+  const __dirname = dirname(fileURLToPath(import.meta.url))
+  const publicPath = path.join(__dirname, '../public')
+  app.use(express.static(publicPath))
 
   app.use(morgan('dev'))
   app.use(express.json())
@@ -47,6 +47,9 @@ async function init() {
 
   // Protected routes
   app.use('/api', appRouter)
+  app.use('/*', (req, res, next) => {
+    res.sendFile(path.join(publicPath, 'index.html'))
+  })
 
   // Error handler middleware
   app.use(errorHandlerMiddleware)

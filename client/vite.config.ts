@@ -12,7 +12,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://server:8000', // Use Docker service name for backend
+        target: 'http://localhost:8000', // Use Docker service name for backend
         changeOrigin: true
       },
     },

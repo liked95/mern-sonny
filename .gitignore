@@ -9,3 +9,4 @@ yarn.lock
 .vscode
 
 dist
+public
