@@ -29,12 +29,8 @@ RUN yarn install --production
 # Copy the compiled server files
 COPY --from=server-build /app/dist /app/dist
 
-# Here, we don't copy the client build files during build time, instead we expect them at runtime
-# The client build files will be available in the /client-build volume when the container is running
-# COPY /client-build /app/public  <-- REMOVE THIS LINE
-
 # Expose the server port
 EXPOSE 8000
 
 # Start the server
-CMD ["node", "dist/index.js"]
+CMD ["yarn", "start"]
