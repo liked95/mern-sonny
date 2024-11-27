@@ -25,6 +25,7 @@ services:
       CLIENT_BUILD_PATH: /client-build
     depends_on:
       - redis
+      - client
     networks:
       - app-network
 
