@@ -1,17 +1,6 @@
 version: "3.8"
 
 services:
-  client:
-    build:
-      context: .
-      dockerfile: client/Dockerfile.prod
-    volumes:
-      - client-build:/client-build
-    ports:
-      - "80:80"
-    environment:
-      NODE_ENV: production
-
   server:
     build:
       context: .
@@ -26,7 +15,6 @@ services:
       NODE_ENV: production
     depends_on:
       - redis
-      - client
     networks:
       - app-network
 
@@ -44,5 +32,4 @@ networks:
   app-network:
 
 volumes:
-  client-build:
   redis_data:

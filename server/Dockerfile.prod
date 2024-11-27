@@ -13,7 +13,22 @@ COPY server/ ./
 # Build the server (e.g., TypeScript → JavaScript)
 RUN yarn build
 
-# Stage 2: Prepare runtime environment
+# Stage 2: Build the client app (same as the client Dockerfile)
+FROM node:18-alpine AS client-build
+
+WORKDIR /app
+
+# Install dependencies
+COPY client/package.json ./
+RUN yarn install
+
+# Copy the client source code
+COPY client/ ./
+
+# Build the production-ready client app
+RUN yarn build
+
+# Stage 3: Prepare runtime environment for the server
 FROM node:18-alpine
 
 WORKDIR /app
@@ -25,7 +40,7 @@ RUN yarn install --production
 # Copy the compiled server files
 COPY --from=server-build /app/dist /app/dist
 
-# Copy the built client files from the shared volume into the public directory of the server
+# Copy the built client files from the client-build stage into the server's public directory
 COPY --from=client-build /app/dist /app/public
 
 # Expose the server port
