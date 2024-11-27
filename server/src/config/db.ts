@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 
 async function connectMongoDB(): Promise<void> {
   try {
-    const uri = process.env.MONGO_URI
+    const uri = process.env.MONGO_URI || "mongodb://localhost:27017/jwt"
     if (!uri) {
       console.error("MongoDB URI does not exist!")
       process.exit(1)

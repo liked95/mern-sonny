@@ -1,23 +1,21 @@
 {
   "compilerOptions": {
-    "module": "ESNext", // Use ES module syntax
-    "target": "ESNext", // Target modern JavaScript
-    "moduleResolution": "node", // Use Node.js module resolution
-    "strict": true, // Enable all strict type-checking options
-    "esModuleInterop": true, // Enable compatibility for CommonJS modules
-    "allowSyntheticDefaultImports": true, // Allow synthetic default imports
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true, // Allow importing JSON files
-    "outDir": "./dist", // Output the compiled JavaScript to the "dist" folder
-    "rootDir": "./src", // The root directory of your source files
-    "noEmitOnError": true, // Do not output JavaScript if there are type errors
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ESNext",
+    "isolatedModules": true,
+    "esModuleInterop": true,
     "noEmit": true,
-    "skipLibCheck": true, // Skip type checking of declaration files
-    "baseUrl": "./", // Ensure correct import resolution from project root
-    "paths": {
-      "*": ["src/*"] // Allow imports without extensions
-    }
+    "allowImportingTsExtensions": true,
+    "outDir": "dist",
+    "lib": [ "esnext" ],
+    "types": [ "node" ],
+    "baseUrl": "./",
   },
-  "include": ["src/**/*.ts"], // Include all TypeScript files in the src folder
-  "exclude": ["node_modules"] // Exclude node_modules from compilation
+  "exclude": [ "node_modules" ],
+  "include": [
+    "src/**/*.ts",
+    "bin/*.ts"
+  ]
 }
