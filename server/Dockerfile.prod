@@ -44,7 +44,7 @@ COPY --from=server-build /app/dist /app/dist
 COPY --from=client-build /app/dist /app/public
 
 # Expose the server port
-EXPOSE 80
+EXPOSE 8000
 
 # Start the server
 CMD ["yarn", "start"]
