@@ -31,14 +31,16 @@ jobs:
         run: |
           docker build -t myapp-server -f server/Dockerfile.prod .
 
-      # Step 2: Copy the client build files into the server container
-      - name: Copy client build files into the server container
+      # Step 2: Copy the client build files into the server image
+      - name: Copy client build files into the server image
         run: |
+          # Create a temporary container from the client image to access its build output
           docker create --name temp-container myapp-client
           docker cp temp-container:/app/dist ./client/dist
           docker rm temp-container
 
-          docker cp ./client/dist/. myapp-server:/app/public/
+          # Build the server image and include the client files
+          docker build -t myapp-server --build-arg CLIENT_DIST=./client/dist -f server/Dockerfile.prod .
 
       # Step 3: Log in to Docker Hub using credentials stored in GitHub Secrets
       - name: Log in to Docker Hub

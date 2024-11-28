@@ -25,6 +25,10 @@ RUN yarn install --production
 # Copy the compiled server files
 COPY --from=server-build /app/dist /app/dist
 
+# Add a build argument to accept client files
+ARG CLIENT_DIST
+COPY ${CLIENT_DIST} /app/public/
+
 # Expose the server port
 EXPOSE 8000
 
