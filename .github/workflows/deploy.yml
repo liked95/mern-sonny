@@ -5,6 +5,10 @@ on:
     branches:
       - master
 
+env:
+  EC2_USER: ec2-user@13.236.137.92
+  APP_DIRECTORY_IN_EC2: /home/ec2-user/mern-sonny
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -18,17 +22,12 @@ jobs:
         with:
           node-version: "18"
 
-      # Step 1: Build the client app image (this uses the Dockerfile for client)
-      - name: Build the client image
-        run: |
-          docker build -t myapp-client -f client/Dockerfile.prod .
-
-      # Step 2: Build the server app image
+      # Step 1: Build the server app image
       - name: Build the server app image
         run: |
           docker build -t myapp-server -f server/Dockerfile.prod .
 
-      # Step 3: Copy the client build files into the server container
+      # Step 2: Copy the client build files into the server container
       - name: Copy client build files into the server container
         run: |
           # Create a temporary container from the client image to access its build output
@@ -39,9 +38,42 @@ jobs:
           # Copy the client dist folder into the server container's public folder
           docker cp ./client/dist/. myapp-server:/app/public/
 
-      # Step 4: Deploy to EC2 (copy the server build files and restart the container)
+      # Step 3: Log in to Docker Hub using credentials stored in GitHub Secrets
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      # Step 4: Tag the Docker image for pushing to Docker Hub
+      - name: Tag the Docker image
+        run: |
+          docker tag myapp-server:latest liked95/mern-sonny:${{ github.sha }}
+
+      # Step 5: Push the server image to Docker Hub
+      - name: Push the Docker image to Docker Hub
+        run: |
+          docker push liked95/mern-sonny:${{ github.sha }}
+
+      # Step 6: Deploy to EC2 (pull the server image and restart the container)
       - name: Deploy to EC2
         run: |
-          # Assuming you have set up SSH keys for EC2 access
-          scp -r dist/* ec2-user@your-ec2-ip:/path/to/app/dist
-          ssh ec2-user@your-ec2-ip 'cd /path/to/app && docker-compose -f docker-compose.prod.yml down && docker-compose -f docker-compose.prod.yml up -d'
+          # SSH into EC2
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H $EC2_USER >> ~/.ssh/known_hosts
+
+          # Navigate to the app directory and perform deployment
+          ssh $EC2_USER << EOF
+            cd $APP_DIRECTORY_IN_EC2
+
+            # Pull the latest server image from Docker Hub
+            docker pull liked95/mern-sonny:${{ github.sha }}
+
+            # Shut down any currently running containers
+            docker-compose -f docker-compose.prod.yml down
+
+            # Restart the containers using the latest image
+            docker-compose -f docker-compose.prod.yml up -d
+
+            # Optionally check the status of running containers
+            docker ps
+          EOF
