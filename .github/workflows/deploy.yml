@@ -7,7 +7,7 @@ on:
 
 env:
   EC2_USER: ec2-user@13.236.137.92
-  APP_DIRECTORY_IN_EC2: /home/ec2-user/mern-sonny
+  APP_DIRECTORY: /path/to/app
 
 jobs:
   build-and-deploy:
@@ -23,6 +23,10 @@ jobs:
           node-version: "18"
 
       # Step 1: Build the server app image
+      - name: Build the client app image
+        run: |
+          docker build -t myapp-client -f client/Dockerfile.prod .
+
       - name: Build the server app image
         run: |
           docker build -t myapp-server -f server/Dockerfile.prod .
@@ -30,12 +34,10 @@ jobs:
       # Step 2: Copy the client build files into the server container
       - name: Copy client build files into the server container
         run: |
-          # Create a temporary container from the client image to access its build output
           docker create --name temp-container myapp-client
           docker cp temp-container:/app/dist ./client/dist
           docker rm temp-container
 
-          # Copy the client dist folder into the server container's public folder
           docker cp ./client/dist/. myapp-server:/app/public/
 
       # Step 3: Log in to Docker Hub using credentials stored in GitHub Secrets
@@ -47,7 +49,7 @@ jobs:
         run: |
           docker tag myapp-server:latest liked95/mern-sonny:${{ github.sha }}
 
-      # Step 5: Push the server image to Docker Hub
+      # Step 5: Push the Docker image to Docker Hub
       - name: Push the Docker image to Docker Hub
         run: |
           docker push liked95/mern-sonny:${{ github.sha }}
@@ -55,25 +57,15 @@ jobs:
       # Step 6: Deploy to EC2 (pull the server image and restart the container)
       - name: Deploy to EC2
         run: |
-          # SSH into EC2
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H $EC2_USER >> ~/.ssh/known_hosts
 
-          # Navigate to the app directory and perform deployment
           ssh $EC2_USER << EOF
-            cd $APP_DIRECTORY_IN_EC2
-
-            # Pull the latest server image from Docker Hub
+            cd $APP_DIRECTORY
             docker pull liked95/mern-sonny:${{ github.sha }}
-
-            # Shut down any currently running containers
             docker-compose -f docker-compose.prod.yml down
-
-            # Restart the containers using the latest image
             docker-compose -f docker-compose.prod.yml up -d
-
-            # Optionally check the status of running containers
             docker ps
           EOF
