@@ -12,6 +12,3 @@ COPY client/ ./
 
 # Build the production-ready client app
 RUN yarn build
-
-# No Nginx in this Dockerfile. Just copy the built assets to a volume.
-VOLUME ["/client-build"]

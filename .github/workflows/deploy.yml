@@ -1,0 +1,47 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      # Step 1: Build the client app image (this uses the Dockerfile for client)
+      - name: Build the client image
+        run: |
+          docker build -t myapp-client -f client/Dockerfile.prod .
+
+      # Step 2: Build the server app image
+      - name: Build the server app image
+        run: |
+          docker build -t myapp-server -f server/Dockerfile.prod .
+
+      # Step 3: Copy the client build files into the server container
+      - name: Copy client build files into the server container
+        run: |
+          # Create a temporary container from the client image to access its build output
+          docker create --name temp-container myapp-client
+          docker cp temp-container:/app/dist ./client/dist
+          docker rm temp-container
+
+          # Copy the client dist folder into the server container's public folder
+          docker cp ./client/dist/. myapp-server:/app/public/
+
+      # Step 4: Deploy to EC2 (copy the server build files and restart the container)
+      - name: Deploy to EC2
+        run: |
+          # Assuming you have set up SSH keys for EC2 access
+          scp -r dist/* ec2-user@your-ec2-ip:/path/to/app/dist
+          ssh ec2-user@your-ec2-ip 'cd /path/to/app && docker-compose -f docker-compose.prod.yml down && docker-compose -f docker-compose.prod.yml up -d'
