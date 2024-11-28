@@ -6,7 +6,8 @@ on:
       - master
 
 env:
-  EC2_USER: ec2-user@13.236.137.92
+  EC2_USER: ec2-user
+  EC2_HOST: 13.236.137.92
   APP_DIRECTORY: /home/ec2-user/mern-sonny
 
 jobs:
@@ -66,26 +67,11 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H $EC2_USER >> ~/.ssh/known_hosts
+
+          # Add the host to known_hosts
+          ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
 
           # Connect to EC2 and deploy
-          ssh $EC2_USER << EOF
+          ssh $EC2_USER@$EC2_HOST << EOF
             set -e  # Stop on errors
-            echo "Connecting to EC2 and starting deployment"
-            
-            # Navigate to the application directory
-            cd $APP_DIRECTORY
-
-            # Pull the latest Docker image
-            echo "Pulling the latest Docker image"
-            docker pull liked95/mern-sonny:${{ github.sha }}
-
-            # Restart the services
-            echo "Restarting Docker containers"
-            docker-compose -f docker-compose.prod.yml down
-            docker-compose -f docker-compose.prod.yml up -d
-            
-            # Check running containers
-            echo "Running Docker containers:"
-            docker ps
-          EOF
+           
