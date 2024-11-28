@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import signupIcon from "@/assets/images/signupIcon.png"
 import './style.css'
 
 function Signup() {
@@ -89,7 +90,7 @@ function Signup() {
     <div className="signup-container">
       <div className="signup-box">
         <div className="signup-logo">
-          <img src="./src/assets/images/login-icon.gif" alt="Flower Icon" />
+          <img src={signupIcon} alt="Signup Icon" />
         </div>
         <h1>
           Join <span className="brand">Spectre</span>
