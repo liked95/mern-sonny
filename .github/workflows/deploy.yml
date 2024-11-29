@@ -9,6 +9,7 @@ env:
   EC2_USER: ec2-user                    # Username for the EC2 instance
   EC2_HOST: 13.236.137.92               # Public IP address of the EC2 instance
   APP_DIRECTORY: /home/ec2-user/mern-sonny  # Directory on EC2 where the app is deployed
+  SERVER_IMAGE_BASE: liked95/mern-sonny  # Base path of the server image on Docker Hub
 
 jobs:
   build-and-deploy:
@@ -34,10 +35,17 @@ jobs:
       # Step 4: Push Docker Image to Docker Hub
       - name: Push Docker image to Docker Hub
         run: |
+          # Assign the commit SHA to IMAGE_TAG
+          IMAGE_TAG=${{ github.sha }}
+
+          # Dynamically construct the full SERVER_IMAGE
+          SERVER_IMAGE=$SERVER_IMAGE_BASE:$IMAGE_TAG
+
           # Tag the server image with the current commit SHA
-          docker tag myapp-server:latest liked95/mern-sonny:${{ github.sha }}
+          docker tag myapp-server:latest $SERVER_IMAGE
+
           # Push the tagged image to Docker Hub
-          docker push liked95/mern-sonny:${{ github.sha }}
+          docker push $SERVER_IMAGE
 
       # Step 5: Set Up SSH to Access EC2
       - name: Set up SSH to Access EC2
@@ -53,9 +61,13 @@ jobs:
           ssh $EC2_USER@$EC2_HOST << EOF
             set -e  # Stop execution if any command fails
             cd $APP_DIRECTORY  # Navigate to the application directory on the EC2 instance
-            docker pull liked95/mern-sonny:${{ github.sha }}  # Pull the latest Docker image from Docker Hub
-            docker-compose -f docker-compose.prod.yml down  # Stop any running containers
-            docker-compose -f docker-compose.prod.yml up -d  # Start the containers in detached mode
+
+            # Use the dynamically exported SERVER_IMAGE from the environment
+            docker pull $SERVER_IMAGE
+
+            # Restart the services with the latest image
+            docker-compose -f docker-compose.prod.yml down
+            SERVER_IMAGE=$SERVER_IMAGE docker-compose -f docker-compose.prod.yml up -d
           EOF
 
       # Step 7: Clean Up Docker
