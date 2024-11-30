@@ -59,6 +59,9 @@ jobs:
             set -e  # Stop execution if any command fails
             cd $APP_DIRECTORY  # Navigate to the application directory on the EC2 instance
             
+            # Pull the latest changes from the repository
+            git pull origin master
+            
             echo "Deploying SERVER_IMAGE: $SERVER_IMAGE_BASE:latest"
 
             # Pull the latest Docker image
