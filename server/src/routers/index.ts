@@ -8,8 +8,8 @@ const appRouter = Router()
 
 appRouter.use('/auth', authRouter)
 appRouter.use('/user', validateAuthentication, userRouter)
-appRouter.get("/test", (req, res) => {
-    res.json({success: 1, data: "Github Actions dinh vlll"})
+appRouter.get("/test-docker", (req, res) => {
+    res.json({success: 1, data: "Cung ra gi day"})
 })
 
 

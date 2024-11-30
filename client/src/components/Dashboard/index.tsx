@@ -17,7 +17,7 @@ const Dashboard: React.FC<DashBoardProps> = ({ user }) => {
 
         <div className="dashboard-widgets">
           <div className="widget">
-            <h3>Recent For the Git Hub Actions so good really??</h3>
+            <h3>Recent Activities for the good old damnit</h3>
             <p>No recent activities to show.</p>
           </div>
           <div className="widget">
