@@ -64,6 +64,8 @@ jobs:
           ssh $EC2_USER@$EC2_HOST << EOF
             set -e  # Stop execution if any command fails
             cd $APP_DIRECTORY  # Navigate to the application directory on the EC2 instance
+      
+            echo "Deploying SERVER_IMAGE: $SERVER_IMAGE"
 
             # Pull the latest Docker image
             docker pull $SERVER_IMAGE
@@ -71,6 +73,7 @@ jobs:
             # Restart the services with the latest image
             SERVER_IMAGE=$SERVER_IMAGE docker-compose -f docker-compose.prod.yml down
             SERVER_IMAGE=$SERVER_IMAGE docker-compose -f docker-compose.prod.yml up -d
+            docker-compose -f docker-compose.prod.yml up config
           EOF
 
       # Step 7: Clean Up Docker

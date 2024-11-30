@@ -9,6 +9,7 @@ services:
       - server/.env
     environment:
       NODE_ENV: production
+      DEBUG_SERVER_IMAGE: "${SERVER_IMAGE}"
     depends_on:
       - redis
     networks:
