@@ -73,7 +73,7 @@ jobs:
             # Restart the services with the latest image
             SERVER_IMAGE=$SERVER_IMAGE docker-compose -f docker-compose.prod.yml down
             SERVER_IMAGE=$SERVER_IMAGE docker-compose -f docker-compose.prod.yml up -d
-            docker-compose -f docker-compose.prod.yml up config
+            docker-compose -f docker-compose.prod.yml config
           EOF
 
       # Step 7: Clean Up Docker
