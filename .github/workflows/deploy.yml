@@ -7,7 +7,7 @@ on:
 
 env:
   EC2_USER: ec2-user                    # Username for the EC2 instance
-  EC2_HOST: 13.236.137.92               # Public IP address of the EC2 instance
+  EC2_HOST: 3.104.33.43               # Public IP address of the EC2 instance
   APP_DIRECTORY: /home/ec2-user/mern-sonny  # Directory on EC2 where the app is deployed
   SERVER_IMAGE_BASE: liked95/mern-sonny  # Base path of the server image on Docker Hub
 
