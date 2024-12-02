@@ -18,7 +18,7 @@ const Dashboard: React.FC<DashBoardProps> = ({ user }) => {
         <div className="dashboard-widgets">
           <div className="widget">
             <h3>Recent Activities FOR NGINXXXXX LEL</h3>
-            <p>No recent activities to show because its 8.30PM 2 December already bro!!!.</p>
+            <p>No recent activities to show because its 8.30PM 2 December already bro!!!!!.</p>
           </div>
           <div className="widget">
             <h3>Account Summary</h3>
