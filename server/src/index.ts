@@ -51,6 +51,11 @@ async function init() {
     })
   )
 
+  app.use((req, res, next) => {
+    res.getHeaders()?.['x-powered-by'] && res.removeHeader('x-powered-by')
+    next()
+  })
+
   // Protected routes
   app.use('/api', appRouter)
   app.use('/*', (req, res, next) => {
